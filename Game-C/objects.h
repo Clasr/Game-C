@@ -84,7 +84,7 @@ struct Shoot {
     bool live;
 };
 
-struct Obstacle{
+struct Obstacle {
     char ID;
     float x;
     float y;
@@ -95,6 +95,15 @@ struct Obstacle{
     int real_size_obst;
     int score;
     bool alive;
+};
+
+struct SpriteScientist {
+    int frameWidth;
+    int frameHeight;
+    int maxFrame;
+    int curFrameA;
+    int curFrameB;
+    int curFrameC;
 };
 
 #endif

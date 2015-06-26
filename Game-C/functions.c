@@ -9,6 +9,8 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+//#include <allegro5/bitmap.h>
+#include <allegro5/allegro_image.h>
 #include "objects.h" //arquivo de objetos
 
 //GLOBALS
@@ -41,11 +43,51 @@ void InitPlayer(Player &player, int *text_color)
 };
 
 //funcao para desenhar jogador
-void DrawPlayer(struct Player &player)
+/*void DrawPlayer(struct Player &player)
 {
     if(player.alive)
     {
         al_draw_filled_rectangle(player.x, player.y, player.x + 40, player.y - 70 , al_map_rgb(0, 175, 255));
+    }
+}*/
+void InitScientist(SpriteScientist &scientist)
+{
+    scientist.frameWidth = 62;
+    scientist.frameHeight = 80;
+    scientist.maxFrame = 3;
+    scientist.curFrameA = 0;
+    scientist.curFrameB = 0;
+    scientist.curFrameC = 0;
+
+}
+void DrawScientist(ALLEGRO_BITMAP *scientistBitmap, Player &player, SpriteScientist &scientist, bool *LEFT, bool *RIGHT)
+{
+    if(player.alive)
+    {
+        if(*LEFT)
+        {
+            al_draw_bitmap_region(scientistBitmap, scientist.curFrameB*scientist.frameWidth, 80, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.curFrameB++;
+            if (scientist.curFrameB > scientist.maxFrame) {
+                scientist.curFrameB = 0;
+            }
+        }
+        else if(*RIGHT)
+        {
+            al_draw_bitmap_region(scientistBitmap, scientist.curFrameC*scientist.frameWidth, 160, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.curFrameC++;
+            if (scientist.curFrameC > scientist.maxFrame) {
+                scientist.curFrameC = 0;
+            }
+        }
+        else
+        {
+            al_draw_bitmap_region(scientistBitmap, scientist.curFrameA*scientist.frameWidth, 240, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.curFrameA++;
+            if (scientist.curFrameA > scientist.maxFrame) {
+                scientist.curFrameA = 0;
+            }
+        }
     }
 }
 
@@ -727,7 +769,7 @@ void UpdateObstacle(Obstacle &obstacle, ALLEGRO_FONT *medium_font, Player &playe
                 if(obstacle.y<(50) &&
                         player.x>=obstacle.x &&
                         player.x+player.boundx <= obstacle.x+obstacle.size_obst)
-                    al_draw_textf(medium_font, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT/2, ALLEGRO_ALIGN_CENTER, "JUMP!");
+                    al_draw_textf(medium_font, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT/2, ALLEGRO_ALIGN_CENTRE, "JUMP!");
             }
         }
     }
@@ -782,7 +824,7 @@ void DrawText(ALLEGRO_FONT *title_font, ALLEGRO_FONT *medium_font, Player &playe
         {
             al_clear_to_color(al_map_rgb(*text_boss * 2, *text_boss * 2, *text_boss * 2));
             al_draw_textf(medium_font, al_map_rgb(255, 255, 255), 50, 100, ALLEGRO_ALIGN_LEFT, "Boss: %d", boss[j].lives);
-            al_draw_textf(medium_font, al_map_rgb(*text_boss, 0, 0), WIDTH/2, 100, ALLEGRO_ALIGN_CENTER, "Boss %d", *num_boss);
+            al_draw_textf(medium_font, al_map_rgb(*text_boss, 0, 0), WIDTH/2, 100, ALLEGRO_ALIGN_CENTRE, "Boss %d", *num_boss);
         }
     }
     al_draw_textf(medium_font, al_map_rgb(255, 255, 255), 50, 20, ALLEGRO_ALIGN_LEFT, "Score: %d", player.score);

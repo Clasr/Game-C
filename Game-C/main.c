@@ -13,7 +13,8 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include <allegro5/bitmap.h>
+//#include <allegro5/bitmap.h>
+#include <allegro5/allegro_image.h>
 #include "objects.h" //header de objetos
 #include "functions.h" //header de funcoes
 
@@ -49,11 +50,13 @@ int main()
     struct Shoot shootW;
     struct Shoot shootE;
     struct Obstacle obstacle;
+    struct SpriteScientist scientist;
 
     //allegro variables
     ALLEGRO_DISPLAY *display;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_BITMAP *scientistBitmap;
 
     //ALLEGRO_TIMER *slowmo = NULL;
     ALLEGRO_FONT *title_font = NULL;
@@ -73,7 +76,6 @@ int main()
     //Allegro Module Init
     al_init_primitives_addon();
     al_init_font_addon();
-    al_init_ttf_addon();
     if (!al_init_ttf_addon())
     {
         printf("Falha ao inicializar addon allegro_ttf.\n");
@@ -81,9 +83,24 @@ int main()
     }
     al_install_keyboard();
 
+    al_init_image_addon();
+    scientistBitmap = al_load_bitmap("sprites/scientist.png");
+    if (!scientistBitmap)
+    {
+        al_destroy_display(display);
+        printf("Falha ao carregar sprite.\n");
+        return -1;
+    }
+
     event_queue = al_create_event_queue();
     timer = al_create_timer(1.0 / FPS);
-    medium_font = al_load_font("fonts/EHSMB.ttf", 50, 0);
+    medium_font = al_load_font("fonts/EHSMB.TTF", 50, 0);
+    if (!medium_font)
+    {
+        al_destroy_display(display);
+        printf("Falha ao carregar fonte.\n");
+        return -1;
+    }
     title_font = al_load_font("fonts/French Electric Techno.ttf", 200, 0);
     if (!title_font)
     {
@@ -94,6 +111,7 @@ int main()
 
     //Inicializacao de objetos
     InitPlayer(player, &text_color); //funcao que "inicia" player
+    InitScientist(scientist);
     InitEnemyRed(enemyred, &NUM_ENEMYRED); //funcao que inicia enemyred
     InitEnemyBlue(enemyblue, &NUM_ENEMYBLUE); //funcao que inicia enemyblue
     InitShootQ(shootQ); //funcao que inicializa disparo 1 (capacitor)
@@ -232,7 +250,8 @@ int main()
             DrawEnemyBlue(enemyblue, &NUM_ENEMYBLUE, player);
             DrawBoss(boss, &NUM_BOSS, player);
             DrawObstacle(obstacle);
-            DrawPlayer(player);
+            //DrawPlayer(player);
+            DrawScientist(scientistBitmap, player, scientist, &keys[LEFT], &keys[RIGHT]);
 
             al_flip_display();
             if(text_color == 0)

@@ -3,7 +3,9 @@
 
 //Funções Player
 void InitPlayer(Player &player, int *text_color);
-void DrawPlayer(Player &player);
+void InitScientist(SpriteScientist &scientist);
+//void DrawPlayer(Player &player);
+void DrawScientist(ALLEGRO_BITMAP *scientistBitmap, Player &player, SpriteScientist &scientist, bool *LEFT, bool *RIGHT);
 void PlayerJump(Player &player, bool *UP);
 void PlayerRight(Player &player, bool *RIGHT);
 void PlayerLeft(Player &player, bool *LEFT);
