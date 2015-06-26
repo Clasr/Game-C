@@ -98,6 +98,9 @@ struct Obstacle {
 };
 
 struct SpriteScientist {
+    ALLEGRO_BITMAP *bitmap;
+    int frameDelay;
+    int frameCount;
     int frameWidth;
     int frameHeight;
     int maxFrame;

@@ -18,6 +18,7 @@ extern const int WIDTH = 1200; //largura display
 extern const int HEIGHT = 600; //altura display
 extern const int GRAVITY = 1; //gravidade padrao em 1
 
+
 //funcao para iniciar jogador
 void InitPlayer(Player &player, int *text_color)
 {
@@ -32,7 +33,7 @@ void InitPlayer(Player &player, int *text_color)
     player.colision = false;
     player.alive = true;
     player.inverted = false;
-    player.shield = false;
+    player.shield = false;{}
     player.velx = 0;
     player.vely = 1;
     player.boundx = 40;
@@ -42,50 +43,57 @@ void InitPlayer(Player &player, int *text_color)
     *text_color=0;
 };
 
-//funcao para desenhar jogador
-/*void DrawPlayer(struct Player &player)
-{
-    if(player.alive)
-    {
-        al_draw_filled_rectangle(player.x, player.y, player.x + 40, player.y - 70 , al_map_rgb(0, 175, 255));
-    }
-}*/
 void InitScientist(SpriteScientist &scientist)
 {
+    scientist.frameCount = 0;
+    scientist.frameDelay = 12;
     scientist.frameWidth = 62;
     scientist.frameHeight = 80;
-    scientist.maxFrame = 3;
+    scientist.maxFrame = 2;
     scientist.curFrameA = 0;
     scientist.curFrameB = 0;
     scientist.curFrameC = 0;
 
 }
-void DrawScientist(ALLEGRO_BITMAP *scientistBitmap, Player &player, SpriteScientist &scientist, bool *LEFT, bool *RIGHT)
+void DrawScientist(Player &player, SpriteScientist &scientist, bool *LEFT, bool *RIGHT)
 {
     if(player.alive)
     {
         if(*LEFT)
         {
-            al_draw_bitmap_region(scientistBitmap, scientist.curFrameB*scientist.frameWidth, 80, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
-            scientist.curFrameB++;
-            if (scientist.curFrameB > scientist.maxFrame) {
-                scientist.curFrameB = 0;
+            al_draw_bitmap_region(scientist.bitmap, scientist.curFrameB*scientist.frameWidth, 80, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.frameCount++;
+            if(scientist.frameDelay == scientist.frameCount) {
+                scientist.curFrameB++;
+                scientist.frameCount = 0;
+                if (scientist.curFrameB > scientist.maxFrame) {
+                    scientist.curFrameB = 0;
+                }
             }
+
         }
         else if(*RIGHT)
         {
-            al_draw_bitmap_region(scientistBitmap, scientist.curFrameC*scientist.frameWidth, 160, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
-            scientist.curFrameC++;
-            if (scientist.curFrameC > scientist.maxFrame) {
-                scientist.curFrameC = 0;
+            al_draw_bitmap_region(scientist.bitmap, scientist.curFrameC*scientist.frameWidth, 160, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.frameCount++;
+            if(scientist.frameDelay == scientist.frameCount) {
+                scientist.curFrameC++;
+                scientist.frameCount = 0;
+                if (scientist.curFrameC > scientist.maxFrame) {
+                    scientist.curFrameC = 0;
+                }
             }
         }
         else
         {
-            al_draw_bitmap_region(scientistBitmap, scientist.curFrameA*scientist.frameWidth, 240, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
-            scientist.curFrameA++;
-            if (scientist.curFrameA > scientist.maxFrame) {
-                scientist.curFrameA = 0;
+            al_draw_bitmap_region(scientist.bitmap, scientist.curFrameA*scientist.frameWidth, 240, scientist.frameWidth, scientist.frameHeight, player.x, player.y - 80, 0);
+            scientist.frameCount++;
+            if(scientist.frameDelay == scientist.frameCount) {
+                scientist.curFrameA++;
+                scientist.frameCount = 0;
+                if (scientist.curFrameA > scientist.maxFrame) {
+                    scientist.curFrameA = 0;
+                }
             }
         }
     }

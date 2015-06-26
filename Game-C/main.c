@@ -56,7 +56,6 @@ int main()
     ALLEGRO_DISPLAY *display;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
-    ALLEGRO_BITMAP *scientistBitmap;
 
     //ALLEGRO_TIMER *slowmo = NULL;
     ALLEGRO_FONT *title_font = NULL;
@@ -84,8 +83,8 @@ int main()
     al_install_keyboard();
 
     al_init_image_addon();
-    scientistBitmap = al_load_bitmap("sprites/scientist.png");
-    if (!scientistBitmap)
+    scientist.bitmap = al_load_bitmap("sprites/scientist.png");
+    if (!scientist.bitmap)
     {
         al_destroy_display(display);
         printf("Falha ao carregar sprite.\n");
@@ -151,7 +150,6 @@ int main()
             }
 
             ChangeColor(&text_color, player, boss, &NUM_BOSS, &text_boss);
-            DrawText(title_font, medium_font, player, boss, &NUM_BOSS, &text_color, &text_boss);
             PlayerJump(player, &keys[UP]);
             PlayerRight(player, &keys[RIGHT]);
             PlayerLeft(player, &keys[LEFT]);
@@ -243,6 +241,7 @@ int main()
         {
             redraw = false;
 
+            DrawText(title_font, medium_font, player, boss, &NUM_BOSS, &text_color, &text_boss);
             DrawShootQ(shootQ);
             DrawShootW(shootW);
             DrawShootE(shootE, player);
@@ -250,8 +249,7 @@ int main()
             DrawEnemyBlue(enemyblue, &NUM_ENEMYBLUE, player);
             DrawBoss(boss, &NUM_BOSS, player);
             DrawObstacle(obstacle);
-            //DrawPlayer(player);
-            DrawScientist(scientistBitmap, player, scientist, &keys[LEFT], &keys[RIGHT]);
+            DrawScientist(player, scientist, &keys[LEFT], &keys[RIGHT]);
 
             al_flip_display();
             if(text_color == 0)
