@@ -26,7 +26,7 @@ void UpdateShootW(struct Shoot &shootW, struct Player &player);
 
 //Funções shootE
 void InitShootE(Shoot &shootE);
-void DrawShootE(Shoot &shootE, Player &player);
+void DrawShootE(ALLEGRO_BITMAP *shield, Shoot &shootE, Player &player);
 void FireShootE(Shoot &shootE, Player &player);
 void UpdateShootE(Shoot &shootE, Player &player);
 

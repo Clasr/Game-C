@@ -56,6 +56,7 @@ int main()
     ALLEGRO_DISPLAY *display;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_BITMAP *shield = NULL;
 
     //ALLEGRO_TIMER *slowmo = NULL;
     ALLEGRO_FONT *title_font = NULL;
@@ -87,7 +88,14 @@ int main()
     if (!scientist.bitmap)
     {
         al_destroy_display(display);
-        printf("Falha ao carregar sprite.\n");
+        printf("Falha ao carregar sprite scientist.\n");
+        return -1;
+    }
+    shield = al_load_bitmap("sprites/shield.png");
+    if(!shield)
+    {
+        al_destroy_display(display);
+        printf("Falha ao carregar sprite shield.\n");
         return -1;
     }
 
@@ -244,7 +252,7 @@ int main()
             DrawText(title_font, medium_font, player, boss, &NUM_BOSS, &text_color, &text_boss);
             DrawShootQ(shootQ);
             DrawShootW(shootW);
-            DrawShootE(shootE, player);
+            DrawShootE(shield, shootE, player);
             DrawEnemyRed(enemyred, &NUM_ENEMYRED, player);
             DrawEnemyBlue(enemyblue, &NUM_ENEMYBLUE, player);
             DrawBoss(boss, &NUM_BOSS, player);

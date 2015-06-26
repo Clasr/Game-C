@@ -33,11 +33,11 @@ void InitPlayer(Player &player, int *text_color)
     player.colision = false;
     player.alive = true;
     player.inverted = false;
-    player.shield = false;{}
+    player.shield = false;
     player.velx = 0;
     player.vely = 1;
-    player.boundx = 40;
-    player.boundy = 70;
+    player.boundx = 62;
+    player.boundy = 80;
     player.score = 0;
     player.death_counter = 0;
     *text_color=0;
@@ -200,8 +200,8 @@ void ResetPlayer(Player &player, Enemy_red enemyred[], int *num_enemyred, Enemy_
         player.shield = false;
         player.velx = 0;
         player.vely = 1;
-        player.boundx = 40;
-        player.boundy = 70;
+        player.boundx = 62;
+        player.boundy = 80;
         player.score = 0;
         player.death_counter = 0;
         *text_color=0;
@@ -402,23 +402,23 @@ void InitShootE(Shoot &shootE)
     shootE.temp = 0;
     shootE.s = 0;
 }
-void DrawShootE(Shoot &shootE, Player &player)
+void DrawShootE(ALLEGRO_BITMAP *shield, Shoot &shootE, Player &player)
 {
     if (shootE.live)
     {
-        shootE.x = player.x;
-        shootE.y = player.y - player.boundy;
-        al_draw_line((shootE.x), (shootE.y), ((shootE.x) + 40), (shootE.y), al_map_rgb(255, 0, 0), 20);
+        shootE.x = player.x - player.boundx*0.70;
+        shootE.y = player.y - 1.45*player.boundy;
+        al_draw_bitmap(shield, shootE.x, shootE.y, 0);
     }
 }
 void FireShootE(Shoot &shootE, Player &player)
 {
     if (!(shootE.live))
     {
-        shootE.x = player.x;
-        shootE.y = player.y - 70;
+        shootE.x = player.x - player.boundx*0.70;
+        shootE.y = player.y - 1.45*player.boundy;
         shootE.live = true;
-        shootE.temp = 3;
+        shootE.temp = 1000;
         player.shield = true;
     }
 }
