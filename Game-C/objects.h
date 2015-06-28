@@ -2,7 +2,7 @@
 #define __objects_h
 
 //obj IDS (para indentificar o objeto)
-enum IDS{PLAYER, ENEMYRED, ENEMYBLUE, BOSS, SHOOTQ, SHOOTW, SHOOTE, OBSTACLE};
+enum IDS{PLAYER, ENEMY, SHOOT};
 
 //estrutura do player
 struct Player {
@@ -26,14 +26,16 @@ struct Player {
     int death_counter;
 };
 
-struct Enemy_red {
+struct Enemy_red
+{
     char ID;
     float x;
     float y;
     float speed;
     float size_enemy;
     float velx;
-    int vely;
+    float speedx;
+    float vely;
     int boundx;
     int boundy;
     int real_size_enemy;
@@ -41,17 +43,19 @@ struct Enemy_red {
     bool alive;
 };
 
-struct Enemy_blue {
+struct Enemy_blue
+{
     char ID;
     float x;
     float y;
     float speed;
+    float speedx;
     float size_enemy;
-    int velx;
-    int vely;
+    float velx;
+    float vely;
     int boundx;
     int boundy;
-    int real_size_enemy;
+    float real_size_enemy;
     bool moving;
     bool alive;
 };
@@ -80,8 +84,8 @@ struct Shoot {
     int y;
     int speed;
     int temp;
-    int s;
     bool live;
+    ALLEGRO_BITMAP *bitmap;
 };
 
 struct Obstacle {
@@ -107,6 +111,18 @@ struct SpriteScientist {
     int curFrameA;
     int curFrameB;
     int curFrameC;
+};
+
+struct Sprite
+{
+    int x;
+    int y;
+    int frame_max;
+    int frame_atual;
+    int frame_count;
+    int frame_delay;
+
+    ALLEGRO_BITMAP *image[20];
 };
 
 #endif
