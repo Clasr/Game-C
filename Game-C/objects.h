@@ -16,12 +16,11 @@ struct Player {
     bool moving;
     bool colision;
     bool alive;
-    bool inverted;
     bool shield;
     int velx;
     int vely;
-    int boundx; //(?) descobrir ainda
-    int boundy; //(?) descobrir ainda
+    int boundx;
+    int boundy;
     int score;
     int death_counter;
 };
@@ -85,6 +84,8 @@ struct Shoot {
     int speed;
     int temp;
     bool live;
+    int width;
+    int height;
     ALLEGRO_BITMAP *bitmap;
 };
 

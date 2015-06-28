@@ -9,7 +9,6 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-//#include <allegro5/bitmap.h>
 #include <allegro5/allegro_image.h>
 #include "objects.h" //arquivo de objetos
 
@@ -19,7 +18,6 @@ extern int HEIGHT; //altura display
 extern const int GRAVITY = 1; //gravidade padrao em 1
 extern int back_x;
 extern int back_y;
-
 
 //funcao para iniciar jogador
 void InitPlayer(Player &player, int *text_color)
@@ -34,7 +32,6 @@ void InitPlayer(Player &player, int *text_color)
     player.moving = false;
     player.colision = false;
     player.alive = true;
-    player.inverted = false;
     player.shield = false;
     player.velx = 0;
     player.vely = 1;
@@ -106,9 +103,7 @@ void DrawScientist(Player &player, SpriteScientist &scientist, bool *LEFT, bool 
 void PlayerJump(struct Player &player, bool *UP)
 {
     bool vely_max = false;
-    //pulo nao invertido
-    if(!player.inverted)
-    {
+
         if(player.vely <= player.jumpSpeed && !player.jump && *UP)
         {
             player.vely = player.jumpSpeed;
@@ -131,39 +126,13 @@ void PlayerJump(struct Player &player, bool *UP)
             player.jump = false;
             vely_max = false;
         }
-    }
-    //pulo invertido
-    if(player.inverted)
-    {
-        if(player.vely <= player.jumpSpeed && !player.jump && *UP)
-        {
-            player.vely = player.jumpSpeed;
-            player.jump = true;
-        }
-        if(player.jump && !vely_max)
-        {
-            player.vely -= GRAVITY;
-            player.y += player.vely;
-        }
-        if(player.jump && player.vely == 0)
-            vely_max = true;
-        if(player.jump && vely_max && player.y - player.boundy > 0)
-        {
-            player.y -= player.vely;
-        }
-        if(player.y - player.boundy == 0)
-        {
-            player.vely = 15;
-            player.jump = false;
-            vely_max = false;
-        }
-    }
+
 }
 
 //Andar para direita
-void PlayerRight(struct Player &player, bool *RIGHT)
+void PlayerRight(struct Player &player, bool *RIGHT, struct SpriteScientist &scientist)
 {
-    if(*RIGHT)
+    if(*RIGHT && !((player.x + scientist.frameWidth) >= WIDTH))
     {
         player.x += player.velx;
         player.moving = true;
@@ -173,7 +142,7 @@ void PlayerRight(struct Player &player, bool *RIGHT)
 //andar para esquerda
 void PlayerLeft(struct Player &player, bool *LEFT)
 {
-    if(*LEFT)
+    if(*LEFT && ((player.x > 1)))
     {
         player.x -= player.velx;
         player.moving = true;
@@ -190,8 +159,8 @@ void ResetPlayer(Player &player, Enemy_red enemyred[], int *num_enemyred, Enemy_
     }
     if(player.alive == false)
     {
-        player.x = WIDTH/2;
-        player.y = HEIGHT/2;
+        player.x = back_x;
+        player.y = HEIGHT;
         player.lives = 3;
         player.speed = 7;
         player.jumpSpeed = 15;
@@ -199,7 +168,6 @@ void ResetPlayer(Player &player, Enemy_red enemyred[], int *num_enemyred, Enemy_
         player.moving = false;
         player.colision = false;
         player.alive = true;
-        player.inverted = false;
         player.shield = false;
         player.velx = 0;
         player.vely = 1;
@@ -225,45 +193,6 @@ void ResetPlayer(Player &player, Enemy_red enemyred[], int *num_enemyred, Enemy_
     }
 }
 
-//funcao para teleportar player (inverter)
-void TransportPlayer(struct Player &player)
-{
-    if(!player.inverted && !player.jump)
-    {
-        if(player.x < -150)
-        {
-            player.y = player.boundy;
-            player.x = WIDTH - player.boundx/2;
-            player.inverted = true;
-            player.death_counter = 0;
-        }
-        if(player.x > WIDTH + 150)
-        {
-            player.y = player.boundy;
-            player.x = -(player.boundx/2);
-            player.inverted = true;
-            player.death_counter = 0;
-        }
-    }
-    if(player.inverted && !player.jump)
-    {
-        if(player.x < -150)
-        {
-            player.y = HEIGHT;
-            player.x = WIDTH - player.boundx/2;
-            player.inverted = false;
-            player.death_counter = 0;
-        }
-        if(player.x > WIDTH + 150)
-        {
-            player.y = HEIGHT;
-            player.x = -(player.boundx/2);
-            player.inverted = false;
-
-        }
-    }
-}
-
 //funcoes poder indutor "Q"//////////////////////////////////////////////////
 //funcao para iniciar tiro Q
 void InitShootQ(struct Shoot &shootQ)
@@ -271,6 +200,7 @@ void InitShootQ(struct Shoot &shootQ)
     shootQ.ID = SHOOT;
     shootQ.live = false;
     shootQ.speed = 0;
+    shootQ.bitmap = al_load_bitmap("images/shootQ.png");
 }
 
 //funcao para desenhar tiro Q
@@ -278,7 +208,8 @@ void DrawShootQ(struct Shoot &shootQ)
 {
     if(shootQ.live)
     {
-        al_draw_filled_circle(shootQ.x, shootQ.y, 10, al_map_rgb(0, 0, 255));    }
+        al_draw_scaled_bitmap(shootQ.bitmap, 0, 0, 30, 30, shootQ.x, shootQ.y, shootQ.width, shootQ.height, 0);
+    }
 }
 
 //funcao para disparar tiro Q
@@ -286,18 +217,11 @@ void FireShootQ(struct Shoot &shootQ, struct Player &player)
 {
     if (!(shootQ.live))
     {
-        if(!player.inverted)
-        {
-            shootQ.x = (player.x) + 20;
-            shootQ.y = (player.y) - 70;
-            shootQ.live = true;
-        }
-        if(player.inverted)
-        {
-            shootQ.x = (player.x) + 20;
-            shootQ.y = (player.y) + 20;
-            shootQ.live = true;
-        }
+        shootQ.x = (player.x) + 20;
+        shootQ.y = (player.y) - 70;
+        shootQ.live = true;
+        shootQ.width = 30;
+        shootQ.height = 30;
     }
 }
 
@@ -306,25 +230,14 @@ void UpdateShootQ(struct Shoot &shootQ, struct Player &player)
 {
     if(shootQ.live)
     {
-        if(!player.inverted)
+        shootQ.speed += GRAVITY;
+        shootQ.y -= shootQ.speed;
+        shootQ.width -= GRAVITY;
+        shootQ.height -= GRAVITY;
+        if (shootQ.y < back_y)
         {
-            shootQ.speed += GRAVITY;
-            shootQ.y -= shootQ.speed;
-            if ((shootQ.y) < 0)
-            {
-                shootQ.live = false;
-                shootQ.speed = 0;
-            }
-        }
-        if(player.inverted)
-        {
-            shootQ.speed += GRAVITY;
-            shootQ.y += shootQ.speed;
-            if ((shootQ.y) > HEIGHT)
-            {
-                shootQ.live = false;
-                shootQ.speed = 0;
-            }
+            shootQ.live = false;
+            shootQ.speed = 0;
         }
     }
 }
@@ -336,6 +249,7 @@ void InitShootW(struct Shoot &shootW)
     shootW.ID = SHOOT;
     shootW.live = false;
     shootW.speed = 10;
+    shootW.bitmap = al_load_bitmap("images/shootW.png");
 }
 
 //funcao para desenhar tiro W
@@ -343,27 +257,20 @@ void DrawShootW(struct Shoot &shootW)
 {
     if (shootW.live)
     {
-        al_draw_filled_circle(shootW.x, shootW.y, 15, al_map_rgb(255, 0, 0));
+        al_draw_scaled_bitmap(shootW.bitmap, 0, 0, 30, 30, shootW.x, shootW.y, shootW.width, shootW.height, 0);
     }
 }
 
 //funcao para disparar tiro W
 void FireShootW(struct Shoot &shootW, struct Player &player)
 {
-    if (!(shootW.live))
+    if (!shootW.live)
     {
-        if(!player.inverted)
-        {
-            shootW.x = (player.x) + 20;
-            shootW.y = (player.y) - 70;
-            shootW.live = true;
-        }
-        if(player.inverted)
-        {
-            shootW.x = (player.x) + 20;
-            shootW.y = (player.y) + 20;
-            shootW.live = true;
-        }
+        shootW.x = (player.x) + 20;
+        shootW.y = (player.y) - 70;
+        shootW.live = true;
+        shootW.width = 30;
+        shootW.height = 30;
     }
 }
 
@@ -372,25 +279,14 @@ void UpdateShootW(struct Shoot &shootW, struct Player &player)
 {
     if(shootW.live)
     {
-        if(!player.inverted)
+        shootW.speed += GRAVITY;
+        shootW.y -= shootW.speed;
+        shootW.width -= GRAVITY;
+        shootW.height -= GRAVITY;
+        if (shootW.y < back_y)
         {
-            shootW.speed += GRAVITY;
-            shootW.y -= shootW.speed;
-            if ((shootW.y) < 0)
-            {
-                shootW.live = false;
-                shootW.speed = 0;
-            }
-        }
-        if(player.inverted)
-        {
-            shootW.speed += GRAVITY;
-            shootW.y += shootW.speed;
-            if ((shootW.y) > HEIGHT)
-            {
-                shootW.live = false;
-                shootW.speed = 0;
-            }
+            shootW.live = false;
+            shootW.speed = 0;
         }
     }
 }
@@ -593,10 +489,7 @@ void UpdateEnemyBlue(struct Enemy_blue enemyblue[], int *num_enemies, struct Pla
                 enemyblue[j].size_enemy += enemyblue[j].speed;
             enemyblue[j].velx = enemyblue[j].speedx;
             enemyblue[j].vely = enemyblue[j].speed;
-            if(!player.inverted)
-                enemyblue[j].y += enemyblue[j].vely;
-            if(player.inverted)
-                enemyblue[j].y -= enemyblue[j].vely;
+            enemyblue[j].y += enemyblue[j].vely;
             if(enemyblue[j].size_enemy < enemyblue[j].real_size_enemy/2)
             {
                 if(enemyblue[j].x <= back_x)
@@ -765,24 +658,11 @@ void UpdateObstacle(Obstacle &obstacle, ALLEGRO_FONT *medium_font, Player &playe
                 obstacle.x-=obstacle.velx;
             if(obstacle.x<player.x)
                 obstacle.x+=obstacle.velx;
-            if(!player.inverted)
-            {
-                obstacle.vely += obstacle.speed;
-                obstacle.y+=obstacle.vely;
-                if(obstacle.y>(HEIGHT-50) &&
-                        player.x>=obstacle.x &&
-                        player.x+player.boundx <= obstacle.x+obstacle.size_obst)
-                    al_draw_textf(medium_font, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT/2, ALLEGRO_ALIGN_CENTRE, "JUMP!");
-            }
-            if(player.inverted)
-            {
-                obstacle.vely += obstacle.speed;
-                obstacle.y-=obstacle.vely;
-                if(obstacle.y<(50) &&
-                        player.x>=obstacle.x &&
-                        player.x+player.boundx <= obstacle.x+obstacle.size_obst)
-                    al_draw_textf(medium_font, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT/2, ALLEGRO_ALIGN_CENTRE, "JUMP!");
-            }
+
+            obstacle.vely += obstacle.speed;
+            obstacle.y+=obstacle.vely;
+            if(obstacle.y>(HEIGHT-50) && player.x>=obstacle.x && player.x+player.boundx <= obstacle.x+obstacle.size_obst)
+            al_draw_textf(medium_font, al_map_rgb(255, 0, 0), WIDTH/2, HEIGHT/2, ALLEGRO_ALIGN_CENTRE, "JUMP!");
         }
     }
     if(obstacle.y>HEIGHT+20 || obstacle.y < -20)

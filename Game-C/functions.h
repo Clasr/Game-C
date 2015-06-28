@@ -6,10 +6,9 @@ void InitPlayer(Player &player, int *text_color);
 void InitScientist(SpriteScientist &scientist);
 void DrawScientist(Player &player, SpriteScientist &scientist, bool *LEFT, bool *RIGHT);
 void PlayerJump(Player &player, bool *UP);
-void PlayerRight(Player &player, bool *RIGHT);
+void PlayerRight(Player &player, bool *RIGHT, SpriteScientist &scientist);
 void PlayerLeft(Player &player, bool *LEFT);
 void ResetPlayer(Player &player, Enemy_red enemyred[], int *num_enemyred, Enemy_blue enemyblue[], int *num_enemyblue, Obstacle &obstacle, Boss boss[], int *num_boss, int *text_color);
-void TransportPlayer(Player &player);
 
 //Funções shootQ
 void InitShootQ(struct Shoot &shootQ);

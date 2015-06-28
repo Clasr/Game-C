@@ -132,7 +132,19 @@ int main()
     InitEnemyRed(enemyred, &NUM_ENEMYRED); //funcao que inicia enemyred
     InitEnemyBlue(enemyblue, &NUM_ENEMYBLUE); //funcao que inicia enemyblue
     InitShootQ(shootQ); //funcao que inicializa disparo 1 (capacitor)
+    if(!shootQ.bitmap)
+    {
+        al_destroy_display(display);
+        printf("Falha ao carregar sprite shootQ.\n");
+        return -1;
+    }
     InitShootW(shootW); //funcao que inicializa disparo 2 (indutor)
+    if(!shootW.bitmap)
+    {
+        al_destroy_display(display);
+        printf("Falha ao carregar sprite shootW.\n");
+        return -1;
+    }
     InitShootE(shootE); //funcao que inicializa habilidade de escudo (shield / resistor)
     if(!shootE.bitmap)
     {
@@ -183,9 +195,8 @@ int main()
 
             ChangeColor(&text_color, player, boss, &NUM_BOSS, &text_boss);
             PlayerJump(player, &keys[UP]);
-            PlayerRight(player, &keys[RIGHT]);
+            PlayerRight(player, &keys[RIGHT], scientist);
             PlayerLeft(player, &keys[LEFT]);
-            TransportPlayer(player);
             //updates
             UpdateShootQ(shootQ, player);
             UpdateShootW(shootW, player);
